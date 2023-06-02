@@ -1,0 +1,20 @@
+load("@rules_oci//oci:defs.bzl", "oci_image")
+load("@rules_pkg//:pkg.bzl", "pkg_tar")
+
+# Replace this target with your cc_binary
+cc_binary(
+    name = "cc_bin",
+    srcs = ["hello-world.cc"],
+)
+
+pkg_tar(
+    name = "bin_layer",
+    srcs = [":cc_bin"],
+)
+
+oci_image(
+    name = "image",
+    base = "@distroless_cc",
+    entrypoint = ["/cc_bin"],
+    tars = [":bin_layer"],
+)

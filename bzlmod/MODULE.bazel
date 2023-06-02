@@ -1,0 +1,27 @@
+module(name = "cc_oci_image", version = "0.0.1")
+
+bazel_dep(name = "rules_oci", version = "1.0.0")
+bazel_dep(name = "rules_pkg", version = "0.9.1")
+bazel_dep(name = "platforms", version = "0.0.6")
+
+oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
+
+DIGESTS = {
+    # "gcr.io/distroless/cc:debug" Jun 2, 2023, 2:38:10 PM
+    "debug": "sha256:e606002ea2c39172c99d5f59fc3e8e485ec57bef3caca7900e4ae2c95a25001e",
+    # "gcr.io/distroless/cc:latest" Jun 2, 2023, 2:37:57 PM
+    "latest": "sha256:b53fbf5f81f4a120a489fedff2092e6fcbeacf7863fce3e45d99cc58dc230ccc",
+}
+
+# A multi-arch base image
+oci.pull(
+    name = "distroless_cc",
+    digest = DIGESTS["latest"],
+    image = "gcr.io/distroless/cc",
+    platforms = [
+        "linux/amd64",
+        "linux/arm64",
+    ],
+)
+
+use_repo(oci, "distroless_cc")
